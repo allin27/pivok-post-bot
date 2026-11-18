@@ -288,7 +288,10 @@ class SecurityMiddleware(BaseMiddleware):
         uid = user.id if user else None
         if uid and uid not in ALLOWED_USERS:
             if hasattr(event, "text") and event.text:
-                if event.text.strip().lower() in {SECRET_PASSWORD.lower(), "пивок", "pivok"}:
+                allowed_pw = {SECRET_PASSWORD.lower()}
+                if SECRET_PASSWORD.lower() == "pivok":
+                    allowed_pw.add("пивок")
+                if event.text.strip().lower() in allowed_pw:
                     ALLOWED_USERS.append(uid)
                     lang = get_lang(uid, getattr(user, "language_code", None))
                     set_lang(uid, lang)
